@@ -1,0 +1,271 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% LaTeX Template for Arabic AI Tutorial (Version 4)
+% Engine: XeLaTeX (required)
+% Compile with:
+%   1. xelatex -shell-escape your_tutorial_file.tex
+%   2. biber your_tutorial_file
+%   3. xelatex -shell-escape your_tutorial_file.tex
+%   4. xelatex -shell-escape your_tutorial_file.tex
+% Dependencies:
+%   - XeLaTeX compiler
+%   - Fonts: Amiri (Arabic), TeX Gyre Termes (English Serif), DejaVu Sans Mono (Code)
+%   - Python + Pygments library (for minted code highlighting)
+%   - tcolorbox package (for callout boxes)
+%   - biblatex package + biber backend (for bibliography)
+% Fixes in v4:
+%   - Added abstract environment.
+%   - Added theorem and highlight callout boxes using tcolorbox.
+%   - Added bibliography support using biblatex/biber.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\documentclass[12pt, a4paper]{article}
+
+%------------------------------------------------------
+% PACKAGES
+%------------------------------------------------------
+\usepackage{amsmath, amssymb, amsfonts} % Math symbols and environments
+\usepackage{graphicx}                  % For including images (optional)
+\usepackage[a4paper, margin=2.5cm]{geometry} % Page margins
+\usepackage{xcolor}                    % For defining/using colors
+\usepackage{fontspec}                  % For loading system fonts (required by XeLaTeX/LuaLaTeX)
+\usepackage{polyglossia}               % For multi-language support (Arabic/English)
+\usepackage{minted}                    % For syntax-highlighted code listings
+                                       % Requires Python, Pygments, and -shell-escape flag
+\usepackage[theorems, skins, breakable]{tcolorbox} % For creating styled boxes (callouts)
+\usepackage[backend=biber, style=numeric, sorting=none]{biblatex} % Bibliography management [[3]]
+\usepackage{hyperref}                  % For clickable links (ToC, references, URLs) - Load late
+\usepackage[explicit]{titlesec}        % For customizing section titles
+
+%------------------------------------------------------
+% LANGUAGE & FONT SETUP (Polyglossia & Fontspec)
+%------------------------------------------------------
+% Set main language to Arabic, using Western numerals (0, 1, 2...)
+\setmainlanguage[numerals=western]{arabic}
+\setotherlanguage{english}   % Secondary language for \textenglish{} command
+
+% --- Choose your fonts ---
+\setmainfont[Ligatures=TeX]{TeX Gyre Termes} % Default Serif font (used for English)
+\setsansfont[Ligatures=TeX]{TeX Gyre Heros} % Default Sans-serif font (example, change if needed)
+\setmonofont{DejaVu Sans Mono} % Font for code (\texttt, minted)
+
+% Set the main font specifically for Arabic script text
+\newfontfamily\arabicfont[Script=Arabic, Ligatures=TeX]{Amiri}
+\setmainfont[Script=Arabic, Ligatures=TeX]{Amiri} % Use Amiri for Arabic script
+
+% Set font for math (optional, Latin Modern Math is often default and good)
+% \setmathfont{Latin Modern Math}
+
+%------------------------------------------------------
+% BIBLIOGRAPHY SETUP (Biblatex)
+%------------------------------------------------------
+\addbibresource{references.bib} % Link to your bibliography file [[3]]
+
+% Optional: Customize bibliography heading if needed (polyglossia usually handles this)
+% \DefineBibliographyStrings{arabic}{%
+%   bibliography = {المراجع}, % Title for the bibliography section
+%   references = {المراجع},   % Alternative title
+% }
+
+%------------------------------------------------------
+% MINTED SETUP (Code Listings)
+%------------------------------------------------------
+\setminted{
+    frame=lines, frame=lines, framesep=2mm, baselinestretch=1.1,
+    bgcolor=gray!10, fontsize=\small, linenos=true, breaklines=true,
+    python3=true
+}
+\newmintinline[pycode]{python}{}
+
+%------------------------------------------------------
+% SECTION TITLE FORMATTING (titlesec)
+%------------------------------------------------------
+\definecolor{SectionColor}{rgb}{0.1, 0.3, 0.6} % A nice blue color
+
+\titleformat{\section}
+  {\normalfont\Large\bfseries\color{SectionColor}} {\thesection.} {1em} {#1}
+\titlespacing*{\section}{0pt}{3.5ex plus 1ex minus .2ex}{2.3ex plus .2ex}
+
+\titleformat{\subsection}
+  {\normalfont\large\bfseries\color{SectionColor!80!black}} {\thesubsection.} {1em} {#1}
+\titlespacing*{\subsection}{0pt}{3.25ex plus 1ex minus .2ex}{1.5ex plus .2ex}
+
+%------------------------------------------------------
+% CALLOUT BOX SETUP (tcolorbox)
+%------------------------------------------------------
+\tcbuselibrary{breakable} % Allow boxes to break across pages
+\tcbuselibrary{skins} % Needed for enhanced skin
+
+\definecolor{TheoremColor}{rgb}{0.85, 0.95, 1.0} % Light blue background
+\definecolor{HighlightColor}{rgb}{1.0, 0.98, 0.85} % Light yellow background
+
+%------------------------------------------------------
+% CALLOUT BOX SETUP (tcolorbox)
+%------------------------------------------------------
+\tcbuselibrary{breakable} % Allow boxes to break across pages
+\tcbuselibrary{skins} % Needed for enhanced skin
+
+% --- Define a Turquoise Color Palette ---
+\definecolor{TurquoiseDark}{HTML}{00796B}  % Darker Turquoise/Teal for frames and titles
+\definecolor{TurquoiseLight}{HTML}{E0F2F1} % Very Light Turquoise/Teal for theorem background
+\definecolor{HighlightBg}{HTML}{E8F5E9}   % Very Light Green/Aqua for highlight background
+
+% Theorem Box Style (Numbered) - Turquoise Theme
+\newtcbtheorem[number within=section]{theorembox}{نظريّة}% Theorem Name in Arabic
+{
+    enhanced, % Use enhanced skin
+    breakable, % Allow page breaks
+    colback=TurquoiseLight, % Light turquoise background [[3]]
+    colframe=TurquoiseDark, % Dark turquoise frame [[3]]
+    fonttitle=\bfseries,
+    coltitle=black, % Dark turquoise title text (distinct from background) [[3]]
+    separator sign={:}, % Separator between 'Theorem 1.1' and title
+    % description delimiters={ [}{] }, % If you want brackets around the optional title
+    % terminator sign={.} % Punctuation after 'Theorem 1.1' if no title
+    borderline west={2pt}{0pt}{TurquoiseDark}, % Add a thicker left border line
+    sharp corners, % Use sharp corners instead of rounded
+}{thm} % Prefix for referencing (\ref{thm:label})
+
+% Highlight Box Style (Not Numbered) - Complementary Light Green/Aqua Theme
+\newtcolorbox{highlightbox}[1][]{ % Takes an optional title argument
+    enhanced,
+    breakable,
+    colback=HighlightBg, % Light green/aqua background [[3]]
+    colframe=TurquoiseDark!85!black, % Slightly darker frame color [[3]]
+    fonttitle=\bfseries,
+    coltitle=black, % Matching title color (distinct from background) [[3]]
+    title={#1}, % Use the optional argument as the title
+    sharp corners,
+    boxrule=0.8pt, % Thinner rule than default
+    % If no title is given, add a default prefix:
+    code={\ifdefempty{#1}{\tcbset{before upper=\textit{\textbf{تنبيه:}}\space}}{}}, % Add "Note:" if no title
+    before upper=\parskip, % Add space before content if title exists
+}
+
+%------------------------------------------------------
+% HYPERREF SETUP (PDF Metadata and Links)
+%------------------------------------------------------
+\hypersetup{
+    pdftitle={قالب درس تعليمي في الذكاء الاصطناعي}, pdfauthor={اسم المؤلف هنا},
+    pdfsubject={الذكاء الاصطناعي}, pdfkeywords={ذكاء اصطناعي, تعلم الآلة, عربي, قالب, LaTeX},
+    colorlinks=true, linkcolor=SectionColor, citecolor=green!50!black, urlcolor=blue!70!black,
+    bookmarksnumbered=true, bookmarksopen=true, pdfstartview={FitH}, unicode=true
+}
+
+%------------------------------------------------------
+% DOCUMENT INFO
+%------------------------------------------------------
+\title{درس تعليمي شامل في الذكاء الاصطناعي}
+\author{نذير نيال}
+\date{\today}
+
+%======================================================
+% DOCUMENT START
+%======================================================
+\begin{document}
+
+\maketitle % Display title, author, date
+
+% --- Abstract ---
+\begin{abstract}
+\noindent % Prevents indentation of the first line
+هذا المستند يقدم قالباً شاملاً باستخدام \textenglish{LaTeX} مصمماً خصيصاً لإنشاء دروس تعليمية باللغة العربية في مجال الذكاء الاصطناعي. يركز القالب على البساطة والجمالية، ويدعم الكتابة باللغتين العربية والإنجليزية، وإدراج المعادلات الرياضية، ومقتطفات الشيفرات البرمجية مع تمييز الصيغة. كما يوفر ميزات مثل الترقيم التلقائي للأقسام، وإنشاء جدول المحتويات، وصناديق مميزة للنظريات أو الملاحظات الهامة، وإدارة المراجع باستخدام \textenglish{BibLaTeX}. الهدف هو توفير أساس متين للمعلمين والمؤلفين لإنشاء محتوى تعليمي عربي عالي الجودة في الذكاء الاصطناعي.
+\end{abstract}
+
+\newpage
+\tableofcontents % Generate Table of Contents
+\newpage
+
+%------------------------------------------------------
+% EXAMPLE CONTENT - REPLACE WITH YOUR TUTORIAL
+%------------------------------------------------------
+
+\section{مقدمة في الذكاء الاصطناعي}
+
+أهلاً بكم في هذا الدرس التعليمي حول أساسيات الذكاء الاصطناعي (\textenglish{Artificial Intelligence - AI}). يهدف هذا المستند إلى تقديم نظرة عامة مبسطة للمفاهيم الأساسية في هذا المجال المثير. سنتناول تعريف الذكاء الاصطناعي، مجالاته الرئيسية، وبعض الأمثلة التطبيقية.
+
+\subsection{ما هو الذكاء الاصطناعي؟}
+
+ببساطة، الذكاء الاصطناعي هو فرع من علوم الحاسوب يهدف إلى بناء آلات قادرة على أداء مهام تتطلب عادةً ذكاءً بشريًا. تشمل هذه المهام التعلم، حل المشكلات، التعرف على الأنماط، فهم اللغة الطبيعية، واتخاذ القرارات.
+
+يمكن استخدام الكلمات الإنجليزية عند الحاجة، مثل \textenglish{Machine Learning} أو \textenglish{Deep Learning}.
+
+% --- Example Highlight Box ---
+\begin{highlightbox}[مفهوم أساسي]
+الذكاء الاصطناعي يسعى لمحاكاة القدرات الذهنية البشرية في الآلات.
+\end{highlightbox}
+
+\subsection{تاريخ موجز}
+بدأت فكرة الآلات الذكية منذ القدم، لكن المجال الحديث للذكاء الاصطناعي تأسس في منتصف القرن العشرين مع ظهور الحواسيب الرقمية. شخصيات بارزة مثل \textenglish{Alan Turing} ساهمت بشكل كبير في وضع الأسس النظرية، كما هو موضح في أعماله الكلاسيكية [[8]].
+
+\section{المفاهيم الرياضية الأساسية}
+
+يعتمد الذكاء الاصطناعي بشكل كبير على الرياضيات، خاصة الجبر الخطي، التفاضل والتكامل، ونظرية الاحتمالات.
+
+% --- Example Theorem Box ---
+\begin{theorembox}[دالة التفعيل Sigmoid]{sigmoid_def}
+دالة \textenglish{Sigmoid} هي دالة رياضية شائعة تستخدم في الشبكات العصبية لتحويل قيمة الدخل إلى نطاق بين 0 و 1. صيغتها هي:
+\begin{equation} \label{eq:sigmoid}
+\sigma(x) = \frac{1}{1 + e^{-x}}
+\end{equation}
+\end{theorembox}
+
+يمكن الإشارة إلى هذه النظرية لاحقاً باستخدام \verb|\ref{thm:sigmoid_def}|، مثل: انظر النظرية \ref{thm:sigmoid_def}.
+والمعادلة (\ref{eq:sigmoid}) هي جزء منها.
+
+\section{أمثلة برمجية}
+
+تعتبر البرمجة جزءًا أساسيًا لتطبيق خوارزميات الذكاء الاصطناعي. لغة \textenglish{Python} هي الأكثر شيوعًا في هذا المجال بفضل مكتباتها القوية مثل \textenglish{NumPy}, \textenglish{Pandas}, \textenglish{Scikit-learn}, و \textenglish{TensorFlow/PyTorch} \cite{numpy_harris2020, tensorflow2015-whitepaper}.
+
+\subsection{مثال بلغة بايثون}
+فيما يلي مثال بسيط باستخدام \textenglish{Python} و \textenglish{NumPy} \cite{numpy_harris2020} لحساب المتوسط الحسابي لقائمة أرقام:
+
+% Wrap minted environment in 'english' for LTR alignment
+\begin{english}
+\begin{minted}{python}
+import numpy as np
+
+def calculate_mean(data_list):
+  """Calculates the arithmetic mean of a list of numbers."""
+  if not data_list:
+    return 0 # Or raise an error
+  
+  # Using NumPy for efficient calculation
+  data_array = np.array(data_list)
+  mean_value = np.mean(data_array)
+  
+  return mean_value
+
+# Example usage
+my_list = [10, 20, 30, 40, 50]
+average = calculate_mean(my_list)
+
+# You can still have Arabic comments or strings within the code
+print(f"القائمة: {my_list}") 
+print(f"The mean is: {average}") 
+# Output: The mean is: 30.0
+\end{minted}
+\end{english}
+
+يمكن أيضًا الإشارة إلى شيفرة برمجية مضمنة مثل الدالة \textenglish{\pycode{calculate_mean()}}.
+
+% --- Example Highlight Box (No Title) ---
+\begin{highlightbox}
+تذكر دائماً التحقق من المدخلات في دوالك البرمجية لتجنب الأخطاء غير المتوقعة.
+\end{highlightbox}
+
+\section{الخاتمة}
+
+نأمل أن يكون هذا القالب المحدث مفيدًا لإنشاء دروس تعليمية عربية جذابة وواضحة في مجال الذكاء الاصطناعي. يمكنك تخصيصه وتوسيعه ليناسب احتياجاتك الخاصة.
+
+%------------------------------------------------------
+% END OF EXAMPLE CONTENT
+%------------------------------------------------------
+
+\newpage
+% --- Bibliography ---
+\printbibliography % Print the bibliography here [[3]]
+
+\end{document}
+%======================================================
+% DOCUMENT END
+%======================================================
